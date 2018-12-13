@@ -41,7 +41,6 @@ public class Day8 {
 		return Integer.parseInt(values[nodeStartingIndex + 1]);
 	}
 
-	// FIXME ta metoda jest wywoływana zbyt wiele razy dla zestawu testowego
 	private static List<Node> getChildNodes(int parentNodeStartingIndex, int noOfChildren, String[] values) {
 		List<Node> childrenList = new ArrayList<>();
 		for (int i=1; i<=noOfChildren; i++) {
@@ -77,7 +76,7 @@ public class Day8 {
 //		return length;
 		int length = 0;
 		for (Node childNode : children) {
-			length += childNode.getQuantityOfMdataEntries();
+			length += 2 + childNode.getQuantityOfMdataEntries();
 		}
 		return length;
 	}
@@ -86,7 +85,7 @@ public class Day8 {
 			int quantityOfMdataEntries, String[] values) {
 		List<Integer> mdataEntries = new ArrayList<Integer>();
 		for (int i = 0; i < quantityOfMdataEntries; i++) {
-			// 2 is a given node's 'inner length'
+			// 2 is a given node's innate length
 			Integer entry = Integer.parseInt(values[currentNodeStartIndex + 2 + childrenLength + i]);
 			mdataEntries.add(entry);
 		}
@@ -94,7 +93,10 @@ public class Day8 {
 	}
 
 	private static int getSumOfMdataEntries(Node nodeStructure) {
-		return nodeStructure.getMetadataEntries().stream().mapToInt(e -> e).sum()
-				+ nodeStructure.getChildNodes().stream().mapToInt(ch -> getSumOfMdataEntries(ch)).sum();
+		int parentSum = nodeStructure.getMetadataEntries().stream().mapToInt(e -> e).sum();
+		System.out.println("parent sum: " + parentSum);
+		int childrenSum = nodeStructure.getChildNodes().stream().mapToInt(ch -> getSumOfMdataEntries(ch)).sum();
+		System.out.println("children sum: " + childrenSum);
+		return parentSum + childrenSum; 
 	}
 }
