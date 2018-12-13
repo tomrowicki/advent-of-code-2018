@@ -10,6 +10,10 @@ import org.tomrowicki.aoc2018.FileReader;
 public class Day8 {
 
 	private static int currentNodeStartIndex = 0;
+	
+//	https://www.reddit.com/r/adventofcode/comments/a5devq/day_8_part_1_having_trouble_understanding_the/
+//		https://www.reddit.com/r/adventofcode/comments/a47ubw/2018_day_8_solutions/
+//			https://medium.freecodecamp.org/all-you-need-to-know-about-tree-data-structures-bceacb85490c?fbclid=IwAR3M0prIU7IDTBxze_CpuIPzAmZ0upAbQBAJ2918rPd5RJoLfh3SaughlwM
 
 	public static void main(String[] args) throws IOException, URISyntaxException {
 		String contents = FileReader.getFileContents("input8test.txt").get(0);
