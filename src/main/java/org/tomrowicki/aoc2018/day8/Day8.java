@@ -9,14 +9,10 @@ import org.tomrowicki.aoc2018.FileReader;
 
 public class Day8 {
 
-	private static int currentNodeStartIndex = 0;
-	
-//	https://www.reddit.com/r/adventofcode/comments/a5devq/day_8_part_1_having_trouble_understanding_the/
-//		https://www.reddit.com/r/adventofcode/comments/a47ubw/2018_day_8_solutions/
-//			https://medium.freecodecamp.org/all-you-need-to-know-about-tree-data-structures-bceacb85490c?fbclid=IwAR3M0prIU7IDTBxze_CpuIPzAmZ0upAbQBAJ2918rPd5RJoLfh3SaughlwM
+	private static final int ROOT_STARTING_INDEX = 0;
 
 	public static void main(String[] args) throws IOException, URISyntaxException {
-		String contents = FileReader.getFileContents("input8test.txt").get(0);
+		String contents = FileReader.getFileContents("input8.txt").get(0);
 		String[] values = contents.split(" ");
 		Node nodeStructure = parseNodes(values);
 		int sumOfMdataEntries = getSumOfMdataEntries(nodeStructure);
@@ -25,15 +21,15 @@ public class Day8 {
 
 	private static Node parseNodes(final String[] values) {
 		Node root = new Node(0);
-		int noOfChildren = getNumberOfChildren(currentNodeStartIndex, values);
+		int noOfChildren = getNumberOfChildren(ROOT_STARTING_INDEX, values);
 		root.setNoOfChildren(noOfChildren);
-		int quantityOfMdataEntries = getQuantityOfMetadataEntries(currentNodeStartIndex, values);
+		int quantityOfMdataEntries = getQuantityOfMetadataEntries(ROOT_STARTING_INDEX, values);
 		root.setQuantityOfMdataEntries(quantityOfMdataEntries);
-		List<Node> children = getChildNodes(currentNodeStartIndex, noOfChildren, values);
+		List<Node> children = getChildNodes(ROOT_STARTING_INDEX, noOfChildren, values);
 		root.setChildNodes(children);
 		int childrenLength = getChildrenLength(children);
 		root.setMetadataEntries(
-				getMetadataEntries(currentNodeStartIndex, childrenLength, quantityOfMdataEntries, values));
+				getMetadataEntries(ROOT_STARTING_INDEX, childrenLength, quantityOfMdataEntries, values));
 		return root;
 	}
 
@@ -47,9 +43,9 @@ public class Day8 {
 
 	private static List<Node> getChildNodes(int parentNodeStartingIndex, int noOfChildren, String[] values) {
 		List<Node> childrenList = new ArrayList<>();
-		for (int i=1; i<=noOfChildren; i++) {
+		for (int i = 1; i <= noOfChildren; i++) {
 			int startingIndex;
-			if (i  == 1) {
+			if (i == 1) {
 				startingIndex = parentNodeStartingIndex + 2;
 			} else {
 				int previousChildrenLength = getChildrenLength(childrenList);
@@ -63,24 +59,17 @@ public class Day8 {
 			List<Node> currChildren = getChildNodes(startingIndex, currNoOfChildren, values);
 			childNode.setChildNodes(currChildren);
 			int currChildrenLength = getChildrenLength(currChildren);
-			childNode.setMetadataEntries(getMetadataEntries(startingIndex, currChildrenLength, currQuantityOfMdataEntries, values));
+			childNode.setMetadataEntries(
+					getMetadataEntries(startingIndex, currChildrenLength, currQuantityOfMdataEntries, values));
 			childrenList.add(childNode);
 		}
 		return childrenList;
 	}
 
 	private static int getChildrenLength(List<Node> children) {
-//		int length = 0;
-//		if (children.isEmpty()) {
-//			return quantityOfMdataEntries;
-//		}
-//		for (Node childNode : children) {
-//			length += getChildrenLength(childNode.getQuantityOfMdataEntries(), childNode.getChildNodes());
-//		}
-//		return length;
 		int length = 0;
 		for (Node childNode : children) {
-			length += 2 + childNode.getQuantityOfMdataEntries();
+			length += 2 + childNode.getQuantityOfMdataEntries() + getChildrenLength(childNode.getChildNodes());
 		}
 		return length;
 	}
@@ -98,9 +87,9 @@ public class Day8 {
 
 	private static int getSumOfMdataEntries(Node nodeStructure) {
 		int parentSum = nodeStructure.getMetadataEntries().stream().mapToInt(e -> e).sum();
-		System.out.println("parent sum: " + parentSum);
+		// System.out.println("parent sum: " + parentSum);
 		int childrenSum = nodeStructure.getChildNodes().stream().mapToInt(ch -> getSumOfMdataEntries(ch)).sum();
-		System.out.println("children sum: " + childrenSum);
-		return parentSum + childrenSum; 
+		// System.out.println("children sum: " + childrenSum);
+		return parentSum + childrenSum;
 	}
 }
