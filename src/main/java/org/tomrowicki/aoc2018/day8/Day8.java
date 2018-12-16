@@ -17,6 +17,8 @@ public class Day8 {
 		Node nodeStructure = parseNodes(values);
 		int sumOfMdataEntries = getSumOfMdataEntries(nodeStructure);
 		System.out.println("Answer to part 1: " + sumOfMdataEntries);
+		int rootNodeValue = getNodeValue(nodeStructure);
+		System.out.println("Answer to part 2: " + rootNodeValue);
 	}
 
 	private static Node parseNodes(final String[] values) {
@@ -91,5 +93,28 @@ public class Day8 {
 		int childrenSum = nodeStructure.getChildNodes().stream().mapToInt(ch -> getSumOfMdataEntries(ch)).sum();
 		// System.out.println("children sum: " + childrenSum);
 		return parentSum + childrenSum;
+	}
+
+	private static int getNodeValue(Node nodeStructure) {
+		int nodeValue;
+		if (nodeStructure.getNoOfChildren() == 0) {
+			nodeValue = nodeStructure.getMetadataEntries().stream().mapToInt(e->e).sum();
+		} else {
+			nodeValue = getValueForChildren(nodeStructure.getChildNodes(), nodeStructure.getMetadataEntries());
+		}
+//		System.out.println("Value of node beginning at index " + nodeStructure.getStartingIndex() + " equals: " + nodeValue);
+		return nodeValue;
+	}
+
+	private static int getValueForChildren(List<Node> childNodes, List<Integer> mDataEntries) {
+		int sumOfValues = 0;
+		for (int childIndex : mDataEntries) {
+			if (childNodes.size() >= childIndex) {
+				// this index counts from 1
+				Node child = childNodes.get(childIndex -1);
+				sumOfValues += getNodeValue(child);
+			}
+		}
+		return sumOfValues;
 	}
 }
