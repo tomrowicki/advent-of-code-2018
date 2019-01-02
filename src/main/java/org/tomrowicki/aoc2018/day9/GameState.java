@@ -58,10 +58,29 @@ public class GameState {
 			currentPlayer.setCurrentScore(calculateCurrentScore(currentPlayer, marbleBeingPlaced));
 			cutOutMarble(currentMarbleIndex - 7);
 		} else {
-			// TODO normalny ruch z dwiema opcjami: w zależności od tego czy jesteśmy na krawędzi granicy, czy nie
+			if (currentMarbleIndex < borderIndex) {
+				squeezeMarbleBetweenOthers(currentMarbleIndex + 2);
+				currentMarbleIndex += 2;
+			} else {
+				squeezeMarbleBetweenOthers(1);
+				currentMarbleIndex = 1;
+			}
+			borderIndex++;
 		}
 	}
 
+	private void squeezeMarbleBetweenOthers(int insertionIndex) {
+		List<Integer> basisForNewCircleState = new ArrayList<>();
+		for (int i=0; i<circleState.length; i++) {
+			if (i == insertionIndex) {
+				basisForNewCircleState.add(marbleBeingPlaced);
+			}
+			basisForNewCircleState.add(circleState[i]);
+		}
+		circleState = basisForNewCircleState.stream().mapToInt(i->i).toArray();
+	}
+
+	// FIXME marble 92 causes exception
 	private int calculateCurrentScore(Player currentPlayer, int marbleBeingPlaced) {
 		int prevScore = currentPlayer.getCurrentScore();
 		return prevScore + marbleBeingPlaced + circleState[currentMarbleIndex - 7];
@@ -77,6 +96,8 @@ public class GameState {
 		}
 		// cool way to convert List<Integer> to int[]
 		circleState = basisForNewCircleState.stream().mapToInt(i->i).toArray();
+		currentMarbleIndex = indexOfMarbleBeingCutOut;
+		borderIndex--;
 	}
 
 	public void printCircleState() {

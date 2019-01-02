@@ -11,7 +11,7 @@ public class Day9 {
 
 	public static void main(String[] args) throws IOException, URISyntaxException {
 		List<String> contents = FileReader.getFileContents("input9test.txt");
-		Day9Input parsedInput = parseInput(contents.get(0));
+		Day9Input parsedInput = parseInput(contents.get(1));
 		GameState gs = new GameState(parsedInput.getNoOfPlayers(), parsedInput.getLastMarbleWorth());
 		gs.play();
 		Player playerWithHighestScore = gs.getPlayers().stream()
