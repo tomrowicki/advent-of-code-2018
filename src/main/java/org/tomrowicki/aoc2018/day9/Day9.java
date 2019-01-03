@@ -10,9 +10,13 @@ import org.tomrowicki.aoc2018.FileReader;
 public class Day9 {
 
 	public static void main(String[] args) throws IOException, URISyntaxException {
-		List<String> contents = FileReader.getFileContents("input9test.txt");
-		Day9Input parsedInput = parseInput(contents.get(1));
-		GameState gs = new GameState(parsedInput.getNoOfPlayers(), parsedInput.getLastMarbleWorth());
+		List<String> contents = FileReader.getFileContents("input9.txt");
+		Day9Input parsedInput = parseInput(contents.get(0));
+		// part 1
+		// GameState gs = new GameState(parsedInput.getNoOfPlayers(),
+		// parsedInput.getLastMarbleWorth());
+		// part 2
+		GameState gs = new GameState(parsedInput.getNoOfPlayers(), parsedInput.getLastMarbleWorth() * 100);
 		gs.play();
 		Player playerWithHighestScore = gs.getPlayers().stream()
 				.max(Comparator.comparing(Player::getCurrentScore))
