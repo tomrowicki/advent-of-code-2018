@@ -24,7 +24,7 @@ public class Day9 {
 		System.out.println("Part I answer: " + playerWithHighestScore.getCurrentScore());
 	}
 
-	private static Day9Input parseInput(String line) {
+	static Day9Input parseInput(String line) {
 		Day9Input parsedInput = new Day9Input();
 		String[] parts = line.split(" ");
 		parsedInput.setNoOfPlayers(Integer.parseInt(parts[0]));
