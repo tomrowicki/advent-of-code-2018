@@ -16,12 +16,12 @@ public class Day9 {
 		// GameState gs = new GameState(parsedInput.getNoOfPlayers(),
 		// parsedInput.getLastMarbleWorth());
 		// part 2
+		// Answer: 3552041936
 		GameState gs = new GameState(parsedInput.getNoOfPlayers(), parsedInput.getLastMarbleWorth() * 100);
 		gs.play();
-		Player playerWithHighestScore = gs.getPlayers().stream()
-				.max(Comparator.comparing(Player::getCurrentScore))
+		Player playerWithHighestScore = gs.getPlayers().stream().max(Comparator.comparing(Player::getCurrentScore))
 				.get();
-		System.out.println("Part I answer: " + playerWithHighestScore.getCurrentScore());
+		System.out.println("Answer: " + playerWithHighestScore.getCurrentScore());
 	}
 
 	static Day9Input parseInput(String line) {

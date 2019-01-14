@@ -1,7 +1,6 @@
 package org.tomrowicki.aoc2018.day9;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import lombok.Getter;
@@ -15,13 +14,14 @@ public class GameState {
 	private int currentMarbleIndex;
 
 	private int marbleBeingPlaced;
-	
+
 	private int percentComplete = 0;
 
 	@Getter
 	private List<Player> players = new ArrayList<>();
 
-	private int[] circleState;
+	// TODO spróbować zastąpić ArrayDeque?
+	private ArrayList<Integer> circleState;
 
 	public GameState(int noOfPlayers, int lastMarble) {
 		this.lastMarble = lastMarble;
@@ -30,16 +30,16 @@ public class GameState {
 			players.add(p);
 		}
 		// accounts for the zeroth turn
-		circleState = new int[3];
+		circleState = new ArrayList<>();
 		makeFirstMoves();
 	}
 
 	private void makeFirstMoves() {
 		this.borderIndex = 2;
 		this.currentMarbleIndex = 1;
-		circleState[0] = 0;
-		circleState[1] = 2;
-		circleState[2] = 1;
+		circleState.add(0);
+		circleState.add(2);
+		circleState.add(1);
 		marbleBeingPlaced = 3;
 	}
 
@@ -48,7 +48,7 @@ public class GameState {
 		for (int i = 2; i < lastMarble; i++) {
 			Player currentPlayer = players.get(i % players.size());
 			makeAMove(currentPlayer);
-//			printCircleState(currentPlayer.getPlayerNo());
+			// printCircleState(currentPlayer.getPlayerNo());
 			printPercent(i);
 			marbleBeingPlaced++;
 		}
@@ -73,28 +73,14 @@ public class GameState {
 		}
 	}
 
-	private void squeezeMarbleBetweenOthers(int insertionIndex) {
-		List<Integer> basisForNewCircleState = new ArrayList<>();
-		for (int i = 0; i < circleState.length; i++) {
-			if (i == insertionIndex) {
-				basisForNewCircleState.add(marbleBeingPlaced);
-			}
-			basisForNewCircleState.add(circleState[i]);
-		}
-		if (insertionIndex >= circleState.length) {
-			basisForNewCircleState.add(marbleBeingPlaced);
-		}
-		circleState = basisForNewCircleState.stream().mapToInt(i -> i).toArray();
-	}
-
-	private int calculateCurrentScore(Player currentPlayer, int marbleBeingPlaced) {
-		int prevScore = currentPlayer.getCurrentScore();
-		int newScore;
+	private long calculateCurrentScore(Player currentPlayer, int marbleBeingPlaced) {
+		long prevScore = currentPlayer.getCurrentScore();
+		long newScore;
 		if (currentMarbleIndex < 7) {
 			// dealing with wrapping around via left side
-			newScore = prevScore + marbleBeingPlaced + circleState[circleState.length + (currentMarbleIndex - 7)];
+			newScore = prevScore + marbleBeingPlaced + circleState.get(circleState.size() + (currentMarbleIndex - 7));
 		} else {
-			newScore = prevScore + marbleBeingPlaced + circleState[currentMarbleIndex - 7];
+			newScore = prevScore + marbleBeingPlaced + circleState.get(currentMarbleIndex - 7);
 		}
 		return newScore;
 	}
@@ -102,30 +88,30 @@ public class GameState {
 	private void cutOutMarble(int indexOfMarbleBeingCutOut) {
 		if (indexOfMarbleBeingCutOut < 0) {
 			// dealing with wrapping around via left side
-			indexOfMarbleBeingCutOut = circleState.length + indexOfMarbleBeingCutOut;
+			indexOfMarbleBeingCutOut = circleState.size() + indexOfMarbleBeingCutOut;
 		}
-		List<Integer> basisForNewCircleState = new ArrayList<>();
-		for (int i = 0; i < circleState.length; i++) {
-			if (i == indexOfMarbleBeingCutOut) {
-				continue;
-			}
-			basisForNewCircleState.add(circleState[i]);
-		}
-		// cool way to convert List<Integer> to int[]
-		circleState = basisForNewCircleState.stream().mapToInt(i -> i).toArray();
+		circleState.remove(indexOfMarbleBeingCutOut);
 		currentMarbleIndex = indexOfMarbleBeingCutOut;
 		borderIndex--;
 	}
 
+	private void squeezeMarbleBetweenOthers(int insertionIndex) {
+		if (insertionIndex >= circleState.size()) {
+			circleState.add(marbleBeingPlaced);
+		} else {
+			circleState.add(insertionIndex, marbleBeingPlaced);
+		}
+	}
+
 	public void printCircleState(int playerId) {
-		System.out.println("[" + playerId + "] " + Arrays.toString(circleState));
+		System.out.println("[" + playerId + "] " + circleState.toString());
 	}
 
 	private void printPercent(int marbleWorth) {
 		int percent = marbleWorth * 100 / lastMarble;
 		if (percent > percentComplete) {
 			System.out.println(percent + "%");
-			percentComplete++;
+			percentComplete = percent;
 		}
 	}
 }

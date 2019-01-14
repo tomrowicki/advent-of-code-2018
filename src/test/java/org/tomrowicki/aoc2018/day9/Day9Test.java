@@ -10,8 +10,8 @@ import org.tomrowicki.aoc2018.FileReader;
 @Test
 public class Day9Test {
 	
-	// first try - ~800ms
-	// warmed-up jvm - ~700ms
+	// warmed-up jvm - ~50ms
+	// cutting out a marble takes most of the computing time
 
 	public void shouldRunAsQuicklyAsPossible() throws IOException, URISyntaxException {
 		List<String> contents = FileReader.getFileContents("input9test.txt");

@@ -10,10 +10,10 @@ public class Player {
 
 	@Setter
 	@Getter
-	private int currentScore;
+	private long currentScore;
 
 	public Player(int playerNo) {
 		this.playerNo = playerNo;
-		currentScore = 0;
+		currentScore = 0l;
 	}
 }
